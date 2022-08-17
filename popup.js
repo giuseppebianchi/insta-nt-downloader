@@ -1,4 +1,3 @@
-const DOWNLOAD_POSITION_SELECTOR = "._aatk";
 let saveConfigButton = document.getElementById("save-config");
 let generateDownloadButton = document.getElementById(
   "generate-download-buttons"
@@ -26,45 +25,24 @@ generateDownloadButton.addEventListener("click", async () => {
   console.log("here");
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
-    function: generateDownloadButtonsOnPosts,
+    function: generateDownloadButtons,
   });
 });
 
-function generateDownloadButtonsOnPosts() {
-  //var iconImgURL = chrome.runtime.getURL("images/download-icon.png");
+function generateDownloadButtons() {
   chrome.storage.sync.get("imageClassname", ({ imageClassname }) => {
-    if (imageClassname) {
-      const articles = document.querySelectorAll("article");
-      articles.forEach((a) => {
-      //CHECK URL
-      checkUrl()
-      //if feed
-        // check if gallery
-          // check if article contains "ul" or ._acay
-
-      // if story
-
-      // if profile
-
-      // if single post
-        // check if gallery
-
-      //check if video
-        //open instagram video saver
-
-      //find buttons bar
-    
-      a.querySelector(DOWNLOAD_POSITION_SELECTOR).append(newDownloadButton(a))
-      });
-
-      //SHOW BANNER
-      // Reload page to see changes
+    switch (getPageFromUrl()) {
+      case "FEED":
+        addDownloadButtonsToFeed();
+        break;
+      case "PROFILE":
+        break;
+      case "POST":
+        break;
+      case "STORY":
+        break;
+      default:
+        console.log("Invalid page");
     }
   });
-}
-
-function checkUrl(){
-    const pathnames = location.pathname.split("/")
-    //if lenght == 1 -> feed
-    console.log(pathnames)
 }
