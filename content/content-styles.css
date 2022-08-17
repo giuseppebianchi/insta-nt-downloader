@@ -1,0 +1,17 @@
+.download-button {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  margin: 0;
+  z-index: 999999;
+  cursor: pointer;
+  font-weight: 500;
+  background-color: red;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: contain;
+  text-align: center;
+  padding: 1rem;
+}

@@ -1,0 +1,34 @@
+{
+  "name": "ByClassname Download",
+  "description": "Gets information from Google.",
+  "version": "2.1",
+  "manifest_version": 3,
+  "background": {
+    "service_worker": "background_script.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.instagram.com/*"],
+      "css": ["/content/content-styles.css"],
+      "js": ["/content/content-scripts.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions": ["storage", "activeTab", "webNavigation", "scripting"],
+  "action": {
+    "default_icons": {
+      "16": "/images/icon_16.png",
+      "32": "/images/icon_32.png",
+      "64": "/images/icon_64.png",
+      "128": "/images/icon_128.png"
+    },
+    "default_popup": "popup.html",
+    "default_title": "Press Ctrl(Win)/Command(Mac)+Shift+Right/Left to flip tabs"
+  },
+  "icons": {
+    "16": "images/icon_16.png",
+    "32": "images/icon_32.png",
+    "64": "images/icon_64.png",
+    "128": "images/icon_128.png"
+  }
+}
