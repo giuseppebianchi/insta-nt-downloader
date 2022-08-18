@@ -15,19 +15,23 @@
   text-align: center;
   padding: 1rem;
 }
-.download-button::after{
-    content: 'Download';
+.download-button::after {
+  content: "Download";
 }
 .download-button.loading {
-    background: blue;
-    pointer-events: none;
+  background: blue;
+  pointer-events: none;
 }
 .download-button.loading::after {
-    content: 'Downloading...'
+  content: "Downloading...";
 }
 .download-button.loading.downloaded {
-    background: green;
+  background: green;
 }
 .download-button.loading.downloaded::after {
-    content: 'Download completed.';
+  content: "Download completed.";
+}
+._aabd._aa8k._aanf > .download-button {
+  top: unset;
+  bottom: 0;
 }

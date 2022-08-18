@@ -43,6 +43,9 @@ function generateDownloadButtons() {
         break;
       case "STORY":
         break;
+      case "SAVED":
+        addDownloadButtonsToSaved();
+        break;
       default:
         alert("Invalid page");
     }

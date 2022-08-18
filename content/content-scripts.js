@@ -1,5 +1,7 @@
 console.info("content-script");
-const DEFAULT_PREFIX = '';
+const DEFAULT_PREFIX = "";
+const STORY_PATH = "stories";
+const SAVED_PATH = 'saved';
 const FEED_POST_SELECTOR = "article";
 const FEED_POST_DOWNLOAD_POSITION_SELECTOR = "._aatk";
 
@@ -17,7 +19,6 @@ const POST_USERNAME_SELECTOR = "._acan._acao._acat._acaw._a6hd";
 
 const POST_SELECTOR = "article._aatb";
 const POST_DOWNLOAD_POSITION_SELECTOR = "._aatk";
-
 
 const PROFILE_POST_SELECTOR = "._aabd._aa8k._aanf";
 const PROFILE_POST_DOWNLOAD_POSITION_SELECTOR = "._aatk";
@@ -39,12 +40,12 @@ function getPageFromUrl() {
   if (pathnames.length === 4) {
     return "POST";
   }
-  if (pathnames.length === 5) {
+  if (pathnames.length === 5 && pathnames[1] === STORY_PATH) {
     return "STORY";
   }
-
-  // if pathname.length === 5 -> story -> story = pathnames[3]
-
+  if (pathnames.length > 4 && pathnames[2] === SAVED_PATH) {
+    return "SAVED";
+  }
   return "";
 }
 
@@ -68,15 +69,6 @@ const newDownloadButton = (article, handler) => {
   return downloadButton;
 };
 
-function addDownloadButtonsToFeed() {
-  const articles = document.querySelectorAll(FEED_POST_SELECTOR);
-  articles.forEach((a) => {
-    a.querySelector(FEED_POST_DOWNLOAD_POSITION_SELECTOR).append(
-      newDownloadButton(a)
-    );
-  });
-}
-
 function getDownloadHandlerByType(article) {
   if (checkIfGallery(article)) return activeGalleryImageHandler(article);
   if (checkIfVideo(article)) return videoHandler(article);
@@ -96,7 +88,8 @@ function checkIfGallery(article) {
 function singleImageHandler(article) {
   return (e) => {
     const src = article.querySelector(POST_SINGLE_IMAGE_SELECTOR).src;
-    const user = article.querySelector(POST_USERNAME_SELECTOR)?.text || DEFAULT_PREFIX;
+    const user =
+      article.querySelector(POST_USERNAME_SELECTOR)?.text || DEFAULT_PREFIX;
     downloadMedia({ url: src, user, button: e.target });
   };
 }
@@ -138,6 +131,13 @@ function activeGalleryImageHandler(article) {
   };
 }
 
+function profilePostHandler(article, user) {
+    return (e) => {
+      const src = article.querySelector(POST_SINGLE_IMAGE_SELECTOR).src;
+      downloadMedia({ url: src, user, button: e.target });
+    };
+  }
+
 function videoHandler(article) {
   return (e) => {
     const video = article.querySelector(POST_VIDEO_SELECTOR);
@@ -160,10 +160,7 @@ async function downloadMedia({ url, user = "", button }) {
     url.lastIndexOf("/") + 1,
     url.lastIndexOf("?")
   );
-  /*open(
-    link,
-    "_blank"
-  );*/
+  // open(link, "_blank");
   downloadHidden.href = await toDataURL(url);
   if (button) {
     button.classList.add("downloaded");
@@ -175,6 +172,15 @@ async function downloadMedia({ url, user = "", button }) {
   downloadHidden.click();
 }
 
+function addDownloadButtonsToFeed() {
+    const articles = document.querySelectorAll(FEED_POST_SELECTOR);
+    articles.forEach((a) => {
+      a.querySelector(FEED_POST_DOWNLOAD_POSITION_SELECTOR).append(
+        newDownloadButton(a)
+      );
+    });
+  }
+
 function addDownloadButtonToPost() {
   const post = document.querySelector(POST_SELECTOR);
   post
@@ -183,18 +189,16 @@ function addDownloadButtonToPost() {
 }
 
 function addDownloadButtonsToProfile() {
-    const articles = document.querySelectorAll(PROFILE_POST_SELECTOR);
-    const user = location.pathname.split("/")[1];
-    articles.forEach((a) => {
-      a.append(
-        newDownloadButton(a, profilePostHandler(a, user))
-      );
-    });
-  }
+  const articles = document.querySelectorAll(PROFILE_POST_SELECTOR);
+  const user = location.pathname.split("/")[1];
+  articles.forEach((a) => {
+    a.append(newDownloadButton(a, profilePostHandler(a, user)));
+  });
+}
 
-  function profilePostHandler(article, user) {
-    return (e) => {
-      const src = article.querySelector(POST_SINGLE_IMAGE_SELECTOR).src;
-      downloadMedia({ url: src, user, button: e.target });
-    };
+function addDownloadButtonsToSaved() {
+    const articles = document.querySelectorAll(PROFILE_POST_SELECTOR);
+    articles.forEach((a) => {
+      a.append(newDownloadButton(a));
+    });
   }
