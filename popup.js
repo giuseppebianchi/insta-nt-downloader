@@ -38,11 +38,12 @@ function generateDownloadButtons() {
       case "PROFILE":
         break;
       case "POST":
+        addDownloadButtonToPost();
         break;
       case "STORY":
         break;
       default:
-        console.log("Invalid page");
+        alert("Invalid page");
     }
   });
 }

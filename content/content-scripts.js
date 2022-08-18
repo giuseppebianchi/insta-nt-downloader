@@ -1,15 +1,22 @@
 console.info("content-script");
 const FEED_POST_SELECTOR = "article";
-const POST_DOWNLOAD_POSITION_SELECTOR = "._aatk";
+const FEED_POST_DOWNLOAD_POSITION_SELECTOR = "._aatk";
+
 const POST_SINGLE_IMAGE_SELECTOR = "._aagt";
 const POST_VIDEO_SELECTOR = "._ab1d";
 const POST_GALLERY_SELECTOR = "ul._acay";
+
+const POST_GALLERY_ITEM_SELECTOR = "._aamh";
 const POST_ACTIVE_GALLERY_ITEM_SELECTOR = "._aamh";
 const POST_GALLERY_VIDEO_ITEM_SELECTOR = "._ab1d";
 const POST_GALLERY_ITEM_IMAGE_SELECTOR = "._aagt";
 const POST_GALLERY_BUTTON_RIGHT_SELECTOR = "._aahi";
+
 const POST_USERNAME_SELECTOR = "._acan._acao._acat._acaw._a6hd";
-const POST_SELECTOR = "";
+
+const POST_SELECTOR = "article._aatb";
+const POST_DOWNLOAD_POSITION_SELECTOR = "._aatk";
+
 const STORY_SELECTOR = "";
 
 const downloadHidden = document.createElement("a");
@@ -21,9 +28,15 @@ function getPageFromUrl() {
   if (pathnames.length === 2) {
     return "FEED";
   }
-  // if pathname.length === 3 -> profile -> user = pathnames[1]
-
-  // if pathname.length === 4 -> post -> post = pathnames[2]
+  if (pathnames.length === 3) {
+    return "PROFILE"; //user = pathnames[1]
+  }
+  if (pathnames.length === 4) {
+    return "POST";
+  }
+  if (pathnames.length === 5) {
+    return "STORY";
+  }
 
   // if pathname.length === 5 -> story -> story = pathnames[3]
 
@@ -53,15 +66,15 @@ const newDownloadButton = (article) => {
 function addDownloadButtonsToFeed() {
   const articles = document.querySelectorAll(FEED_POST_SELECTOR);
   articles.forEach((a) => {
-    a.querySelector(POST_DOWNLOAD_POSITION_SELECTOR).append(
+    a.querySelector(FEED_POST_DOWNLOAD_POSITION_SELECTOR).append(
       newDownloadButton(a)
     );
   });
 }
 
 function getDownloadHandlerByType(article) {
-  if (checkIfVideo(article)) return videoHandler(article);
   if (checkIfGallery(article)) return activeGalleryImageHandler(article);
+  if (checkIfVideo(article)) return videoHandler(article);
   return singleImageHandler(article);
 }
 
@@ -89,7 +102,7 @@ function singleImageHandler(article) {
 
 function activeGalleryImageHandler(article) {
   return (e) => {
-    const items = article.querySelectorAll(POST_ACTIVE_GALLERY_ITEM_SELECTOR);
+    const items = article.querySelectorAll(POST_GALLERY_ITEM_SELECTOR);
     let activeItem;
     if (items.length === 2) {
       // Check first or last item
@@ -130,16 +143,18 @@ function videoHandler(article) {
     //check blob url
     const videoUrl = video.src;
     if (videoUrl.substring(0, 4) === "blob") {
-      alert("mobile mode required");
+      alert("mobile mode required to download video");
     } else {
       const user = article.querySelector(POST_USERNAME_SELECTOR).text;
-      e.target.classList.add("loading");
       downloadMedia({ url: videoUrl, user, button: e.target });
     }
   };
 }
 
-async function downloadMedia({ button, url, user = "" }) {
+async function downloadMedia({ url, user = "", button }) {
+  if (button) {
+    button.classList.add("loading");
+  }
   const filename = url.substring(
     url.lastIndexOf("/") + 1,
     url.lastIndexOf("?")
@@ -151,9 +166,17 @@ async function downloadMedia({ button, url, user = "" }) {
   downloadHidden.href = await toDataURL(url);
   if (button) {
     button.classList.add("downloaded");
-    setTimeout(() => button.className = 'download-button', 3000)
+    setTimeout(() => (button.className = "download-button"), 2000);
   }
   downloadHidden.download =
     user + "_" + (filename ? filename : new Date().getTime() + ".jpg");
+  console.log(user, url);
   downloadHidden.click();
+}
+
+function addDownloadButtonToPost() {
+  const post = document.querySelector(POST_SELECTOR);
+  post
+    .querySelector(POST_DOWNLOAD_POSITION_SELECTOR)
+    .append(newDownloadButton(post));
 }
