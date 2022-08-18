@@ -36,6 +36,7 @@ function generateDownloadButtons() {
         addDownloadButtonsToFeed();
         break;
       case "PROFILE":
+        addDownloadButtonsToProfile();
         break;
       case "POST":
         addDownloadButtonToPost();

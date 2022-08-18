@@ -1,4 +1,5 @@
 console.info("content-script");
+const DEFAULT_PREFIX = '';
 const FEED_POST_SELECTOR = "article";
 const FEED_POST_DOWNLOAD_POSITION_SELECTOR = "._aatk";
 
@@ -16,6 +17,10 @@ const POST_USERNAME_SELECTOR = "._acan._acao._acat._acaw._a6hd";
 
 const POST_SELECTOR = "article._aatb";
 const POST_DOWNLOAD_POSITION_SELECTOR = "._aatk";
+
+
+const PROFILE_POST_SELECTOR = "._aabd._aa8k._aanf";
+const PROFILE_POST_DOWNLOAD_POSITION_SELECTOR = "._aatk";
 
 const STORY_SELECTOR = "";
 
@@ -53,12 +58,12 @@ function toDataURL(url) {
     });
 }
 
-const newDownloadButton = (article) => {
+const newDownloadButton = (article, handler) => {
   const downloadButton = document.createElement("div");
   //downloadButton.style.backgroundImage = `url(${iconImgURL})`;
   downloadButton.className = "download-button";
   //downloadButton.innerText = "Download";
-  const downloadHandler = getDownloadHandlerByType(article);
+  const downloadHandler = handler || getDownloadHandlerByType(article);
   downloadButton.addEventListener("click", downloadHandler);
   return downloadButton;
 };
@@ -86,16 +91,12 @@ function checkIfVideo(article) {
 function checkIfGallery(article) {
   const gallery = article.querySelector(POST_GALLERY_SELECTOR);
   return !!gallery;
-  //_aamh _aa1z _aa1_
-  // active itema doesn'e have class _aa1_
 }
-
-// download video
 
 function singleImageHandler(article) {
   return (e) => {
     const src = article.querySelector(POST_SINGLE_IMAGE_SELECTOR).src;
-    const user = article.querySelector(POST_USERNAME_SELECTOR).text;
+    const user = article.querySelector(POST_USERNAME_SELECTOR)?.text || DEFAULT_PREFIX;
     downloadMedia({ url: src, user, button: e.target });
   };
 }
@@ -180,3 +181,20 @@ function addDownloadButtonToPost() {
     .querySelector(POST_DOWNLOAD_POSITION_SELECTOR)
     .append(newDownloadButton(post));
 }
+
+function addDownloadButtonsToProfile() {
+    const articles = document.querySelectorAll(PROFILE_POST_SELECTOR);
+    const user = location.pathname.split("/")[1];
+    articles.forEach((a) => {
+      a.append(
+        newDownloadButton(a, profilePostHandler(a, user))
+      );
+    });
+  }
+
+  function profilePostHandler(article, user) {
+    return (e) => {
+      const src = article.querySelector(POST_SINGLE_IMAGE_SELECTOR).src;
+      downloadMedia({ url: src, user, button: e.target });
+    };
+  }
