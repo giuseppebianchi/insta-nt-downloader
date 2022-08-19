@@ -4,6 +4,9 @@
     padding: 0;
     box-sizing: border-box;
 }
+body{
+    width: 150px;
+}
 hr{
     margin: 1rem 0;
 }

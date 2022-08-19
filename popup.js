@@ -7,7 +7,7 @@ let generateDownloadButton = document.getElementById(
 let imageClassnameInput = document.getElementById("image-classname");
 
 chrome.storage.sync.get("imageClassname", ({ imageClassname }) => {
-  if (imageClassname) {
+  if (imageClassnameInput && imageClassname) {
     imageClassnameInput.value = imageClassname;
     //SHOW BANNER
     // Reload page to see changes
@@ -15,7 +15,7 @@ chrome.storage.sync.get("imageClassname", ({ imageClassname }) => {
 });
 
 // When the button is clicked, save configuration settings into storage
-saveConfigButton.addEventListener("click", () => {
+saveConfigButton?.addEventListener("click", () => {
   chrome.storage.sync.set({ imageClassname: imageClassnameInput.value });
 });
 
@@ -42,6 +42,7 @@ function generateDownloadButtons() {
         addDownloadButtonToPost();
         break;
       case "STORY":
+        addDownloadButtonToStories();
         break;
       case "SAVED":
         addDownloadButtonsToSaved();

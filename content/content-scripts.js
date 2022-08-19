@@ -1,7 +1,7 @@
 console.info("content-script");
 const DEFAULT_PREFIX = "";
 const STORY_PATH = "stories";
-const SAVED_PATH = 'saved';
+const SAVED_PATH = "saved";
 const FEED_POST_SELECTOR = "article";
 const FEED_POST_DOWNLOAD_POSITION_SELECTOR = "._aatk";
 
@@ -23,7 +23,10 @@ const POST_DOWNLOAD_POSITION_SELECTOR = "._aatk";
 const PROFILE_POST_SELECTOR = "._aabd._aa8k._aanf";
 const PROFILE_POST_DOWNLOAD_POSITION_SELECTOR = "._aatk";
 
-const STORY_SELECTOR = "";
+const STORIES_DOWNLOAD_POSITION_SELECTOR = "._a997._ac6a._ac0e";
+const STORY_SELECTOR = "section._ac0a";
+const STORY_IMAGE_SELECTOR = "._aa63._ac51";
+const STORY_VIDEO_SELECTOR = "video._aa63._ac3u source";
 
 const downloadHidden = document.createElement("a");
 downloadHidden.target = "_blank";
@@ -59,7 +62,7 @@ function toDataURL(url) {
     });
 }
 
-const newDownloadButton = (article, handler) => {
+const createDownloadButton = (article, handler) => {
   const downloadButton = document.createElement("div");
   //downloadButton.style.backgroundImage = `url(${iconImgURL})`;
   downloadButton.className = "download-button";
@@ -131,13 +134,6 @@ function activeGalleryImageHandler(article) {
   };
 }
 
-function profilePostHandler(article, user) {
-    return (e) => {
-      const src = article.querySelector(POST_SINGLE_IMAGE_SELECTOR).src;
-      downloadMedia({ url: src, user, button: e.target });
-    };
-  }
-
 function videoHandler(article) {
   return (e) => {
     const video = article.querySelector(POST_VIDEO_SELECTOR);
@@ -148,6 +144,26 @@ function videoHandler(article) {
     } else {
       const user = article.querySelector(POST_USERNAME_SELECTOR).text;
       downloadMedia({ url: videoUrl, user, button: e.target });
+    }
+  };
+}
+
+function profilePostHandler(article, user) {
+  return (e) => {
+    const src = article.querySelector(POST_SINGLE_IMAGE_SELECTOR).src;
+    downloadMedia({ url: src, user, button: e.target });
+  };
+}
+
+function storyHandler(story) {
+  return (e) => {
+    const user = location.pathname.split("/")[2];
+    const video = story.querySelector(STORY_VIDEO_SELECTOR);
+    if (video) {
+      downloadMedia({ url: video.src, user, button: e.target });
+    } else {
+      const image = story.querySelector(STORY_IMAGE_SELECTOR).src;
+      downloadMedia({ url: image, user, button: e.target });
     }
   };
 }
@@ -173,32 +189,37 @@ async function downloadMedia({ url, user = "", button }) {
 }
 
 function addDownloadButtonsToFeed() {
-    const articles = document.querySelectorAll(FEED_POST_SELECTOR);
-    articles.forEach((a) => {
-      a.querySelector(FEED_POST_DOWNLOAD_POSITION_SELECTOR).append(
-        newDownloadButton(a)
-      );
-    });
-  }
+  const articles = document.querySelectorAll(FEED_POST_SELECTOR);
+  articles.forEach((a) => {
+    a.querySelector(FEED_POST_DOWNLOAD_POSITION_SELECTOR).append(
+      createDownloadButton(a)
+    );
+  });
+}
 
 function addDownloadButtonToPost() {
   const post = document.querySelector(POST_SELECTOR);
   post
     .querySelector(POST_DOWNLOAD_POSITION_SELECTOR)
-    .append(newDownloadButton(post));
+    .append(createDownloadButton(post));
 }
 
 function addDownloadButtonsToProfile() {
   const articles = document.querySelectorAll(PROFILE_POST_SELECTOR);
   const user = location.pathname.split("/")[1];
   articles.forEach((a) => {
-    a.append(newDownloadButton(a, profilePostHandler(a, user)));
+    a.append(createDownloadButton(a, profilePostHandler(a, user)));
   });
 }
 
 function addDownloadButtonsToSaved() {
-    const articles = document.querySelectorAll(PROFILE_POST_SELECTOR);
-    articles.forEach((a) => {
-      a.append(newDownloadButton(a));
-    });
-  }
+  const articles = document.querySelectorAll(PROFILE_POST_SELECTOR);
+  articles.forEach((a) => {
+    a.append(createDownloadButton(a));
+  });
+}
+
+function addDownloadButtonToStories() {
+  const story = document.querySelector(STORY_SELECTOR);
+  story.append(createDownloadButton(story, storyHandler(story)));
+}

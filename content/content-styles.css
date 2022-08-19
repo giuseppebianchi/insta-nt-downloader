@@ -14,6 +14,7 @@
   background-size: contain;
   text-align: center;
   padding: 1rem;
+  color: #fff;
 }
 .download-button::after {
   content: "Download";
@@ -34,4 +35,8 @@
 ._aabd._aa8k._aanf > .download-button {
   top: unset;
   bottom: 0;
+}
+section._ac0a > .download-button {
+  position: relative;
+  top: -15px;
 }
