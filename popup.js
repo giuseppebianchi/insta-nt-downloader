@@ -22,7 +22,6 @@ saveConfigButton?.addEventListener("click", () => {
 // When the button is clicked, add download buttons to all visible posts
 generateDownloadButton.addEventListener("click", async () => {
   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  console.log("here");
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
     function: generateDownloadButtons,

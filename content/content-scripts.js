@@ -158,6 +158,7 @@ function profilePostHandler(article, user) {
 function storyHandler(story) {
   return (e) => {
     const user = location.pathname.split("/")[2];
+    // check if video
     const video = story.querySelector(STORY_VIDEO_SELECTOR);
     if (video) {
       downloadMedia({ url: video.src, user, button: e.target });
