@@ -119,16 +119,20 @@ function activeGalleryImageHandler(article) {
       activeItem = items[1];
     }
     //check if image or video
-    const image = activeItem.querySelector(POST_GALLERY_ITEM_IMAGE_SELECTOR);
-    const user = article.querySelector(POST_USERNAME_SELECTOR).text;
-    if (image) {
-      // it's an image
-      downloadMedia({ url: image.src, user, button: e.target });
-    } else {
-      // it's a video
-      const video = activeItem.querySelector(POST_GALLERY_VIDEO_ITEM_SELECTOR);
-      if (video) {
-        videoHandler(article)(e.target);
+    if (activeItem) {
+      const image = activeItem.querySelector(POST_GALLERY_ITEM_IMAGE_SELECTOR);
+      const user = article.querySelector(POST_USERNAME_SELECTOR).text;
+      if (image) {
+        // it's an image
+        downloadMedia({ url: image.src, user, button: e.target });
+      } else {
+        // it's a video
+        const video = activeItem.querySelector(
+          POST_GALLERY_VIDEO_ITEM_SELECTOR
+        );
+        if (video) {
+          videoHandler(article)(e.target);
+        }
       }
     }
   };
