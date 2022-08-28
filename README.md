@@ -9,3 +9,19 @@ Images are intellectual property, so be careful downloading or using someone els
 
 I'm not responsable for any copyright infrangement.
 
+# Instructions
+- 
+
+
+
+# Keyboard Shortcut
+Add a keyboard shortcut to InstaNt to generate downlaod buttons even more faster.
+
+- In the top right corner of Google Chrome, open menu
+- More Tools
+- Extensions
+- On the left side, click **Keyboard Shortcuts**
+
+or
+
+navigate to: `chrome://extensions/shortcuts`
