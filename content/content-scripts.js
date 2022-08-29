@@ -25,8 +25,9 @@ const PROFILE_POST_DOWNLOAD_POSITION_SELECTOR = "._aatk";
 
 const STORIES_DOWNLOAD_POSITION_SELECTOR = "._a997._ac6a._ac0e";
 const STORY_SELECTOR = "section._ac0a";
-const STORY_IMAGE_SELECTOR = "._aa63._ac51";
-const STORY_VIDEO_SELECTOR = "video._aa63._ac3u source";
+const PREVIEW_STORY_SELECTOR = "section._ac0i";
+const STORY_IMAGE_SELECTOR = "._aa63";
+const STORY_VIDEO_SELECTOR = "video._aa63 source";
 
 const downloadHidden = document.createElement("a");
 downloadHidden.target = "_blank";
